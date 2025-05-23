@@ -8,7 +8,6 @@
 #include <iostream>
 #include <optional>
 
-#include "CircleObject.h"
 #include "PhysicsMath.h"
 
 class World
