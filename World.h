@@ -26,9 +26,6 @@ private:
 	// Event
 	std::optional<sf::Event> m_ev;
 
-	// Objects
-	CircleObject m_circle;
-
 	// Main Functions
 	void init();
 	void update();
@@ -37,37 +34,11 @@ private:
 	// Secondary Functions
 	void pollEvents();
 	void updateMousePos();
-	void clickAndCarry();
-	void onPressedClickAndShoot();
-	void onReleaseClickAndShoot();
-	void updateObjects();
-	void frictionUpdate();
-	void gravityUpdate();
-
-	// World logic
-	bool withinCircleBound(const CircleObject& cir);
 
 	// Variables
 	bool m_isRunning = true;
 	sf::Vector2i m_mousePosWindow;
 	sf::Vector2f m_mousePosView;
 
-	//Click and carry
-	bool m_leftMousePressed = false;
-	bool m_leftMouseDrag = false;
-	std::optional<sf::Vector2f> m_leftDragOffset;
-
-	//Click and shoot
-	sf::Vector2f m_rightDragStart;
-
-	//Friction
-	float friction = 0.99f;
-
-	//Gravity
-	float gravity = 0.1f;
-
-	// Collision with border
-	void handleCircleBorderCollision(CircleObject& cir);
-	
 };
 

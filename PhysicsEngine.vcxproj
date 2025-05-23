@@ -135,14 +135,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CircleObject.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="PhysicsMath.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CircleObject.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="PhysicsMath.h" />
+    <ClInclude Include="RigidBody.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
