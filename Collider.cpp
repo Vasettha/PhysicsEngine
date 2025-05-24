@@ -51,6 +51,11 @@ Collider::Density Collider::getDensity() const
 	return m_density;
 }
 
+Collider::ShapeType Collider::getShapeType() const
+{
+	return m_shapeType;
+}
+
 void Collider::setRadius(const float& radius)
 {
 	if (m_shapeType == ShapeType::CIRCLE)

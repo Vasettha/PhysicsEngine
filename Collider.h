@@ -41,6 +41,7 @@ public:
 	float getRestitution() const;
 	float getFriction() const;
 	Collider::Density getDensity() const;
+	Collider::ShapeType getShapeType() const;
 
 	void setRadius(const float& radius);
 	void setHalfSides(const sf::Vector2f& halfSides);

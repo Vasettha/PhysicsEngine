@@ -37,11 +37,16 @@ private:
 	// Secondary Functions
 	void pollEvents();
 	void updateMousePos();
+	void updateObjects();
 
-	void addCircle(float radius, float resistitution, 
-		float friction, Collider::Density density);
-	void addRectangle(sf::Vector2f sides, float resistitution,
-		float friction, Collider::Density density);
+	void addCircle(float radius, float resistitution = 1.0f, 
+		float friction = 0.0f, 
+		Collider::Density density = Collider::Density::LIGHT,
+		sf::Vector2f position = sf::Vector2f(0.0f, 0.0f));
+	void addRectangle(sf::Vector2f sides, float resistitution = 1.0f,
+		float friction = 0.0f, 
+		Collider::Density density = Collider::Density::LIGHT,
+		sf::Vector2f position = sf::Vector2f(0.0f, 0.0f));
 	void removeObj();
 
 	// Variables

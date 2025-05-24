@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="CollisionDetector.cpp" />
     <ClCompile Include="PhysicsMath.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="World.cpp" />
@@ -143,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionDetector.h" />
     <ClInclude Include="PhysicsMath.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="World.h" />

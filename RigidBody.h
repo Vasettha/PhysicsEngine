@@ -12,15 +12,23 @@ class RigidBody
 {
 public:
 
-	RigidBody(const Collider& collider);
+	RigidBody(const Collider& collider, 
+		sf::Vector2f position = sf::Vector2f(0.0f, 0.0f));
 	//~RigidBody();
-
-private:
 
 	void setPosition(const sf::Vector2f& pos);
 	void setOrientation(const float& angle);
 	void setLinearVelocity(const sf::Vector2f& vel);
 	void setAngularVelocity(const float& avel);
+	
+	const Collider& getCollider() const;
+	const sf::Vector2f& getPosition() const;
+	const float& getOrientation() const;
+	const sf::Vector2f& getLinearVelocity() const;
+	const float& getAngularVelocity() const;
+	const sf::Vector2f& getCenter() const;
+
+private:
 
 	sf::Vector2f m_position;
 	float m_orientation;

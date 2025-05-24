@@ -33,6 +33,8 @@ void World::init()
 	// Init Text
 	// Init Objects
 
+	addCircle(20.0f, 1.0f, 0.0f, Collider::Density::LIGHT, sf::Vector2f(50.0f, 100.0f));
+	addRectangle(sf::Vector2f(40.0f, 40.0f), 1.0f, 0.0f, Collider::Density::LIGHT, sf::Vector2f(500.0f, 100.0f));
 
 }
 
@@ -41,11 +43,39 @@ void World::update()
 	// Handle user events
 	pollEvents();
 	updateMousePos();
+	
+	updateObjects();
 }
 
 void World::render()
 {
 	m_window.clear();
+
+	for (auto& obj: m_objects)
+	{
+		switch(obj.getCollider().getShapeType())
+		{
+
+		case (Collider::ShapeType::CIRCLE):
+		{
+			sf::CircleShape circle((float)obj.getCollider().getRadius());
+			circle.setPosition(obj.getPosition());
+			circle.setFillColor(sf::Color::Green);
+			m_window.draw(circle);
+			break;
+		}
+
+		case (Collider::ShapeType::RECTANGLE):
+		{
+			sf::RectangleShape rectangle(sf::Vector2f(obj.getCollider().getHalfSides().x * 2, obj.getCollider().getHalfSides().y * 2));
+			rectangle.setPosition(obj.getPosition());
+			rectangle.setFillColor(sf::Color::Red);
+			m_window.draw(rectangle);
+			break;
+		}
+
+		}
+	}
 
 	m_window.display();
 }
@@ -80,18 +110,28 @@ void World::updateMousePos()
 	m_mousePosView = m_window.mapPixelToCoords(m_mousePosWindow);
 }
 
-void World::addCircle(float radius, float resistitution = 1.0f, 
-	float friction = 0.0f, Collider::Density density = Collider::Density::LIGHT)
+void World::updateObjects()
 {
-	m_objects.emplace_back(Collider(Collider::ShapeType::CIRCLE, radius,
-		resistitution, friction, density));
+	// Update position based on object's velocities
+
+	// Detect collision
+
+	// Resolve collision
+
 }
 
-void World::addRectangle(sf::Vector2f sides, float resistitution = 1.0f, 
-	float friction = 0.0f, Collider::Density density = Collider::Density::LIGHT)
+void World::addCircle(float radius, float resistitution, 
+	float friction, Collider::Density density, sf::Vector2f position)
+{
+	m_objects.emplace_back(Collider(Collider::ShapeType::CIRCLE, radius,
+		resistitution, friction, density), position);
+}
+
+void World::addRectangle(sf::Vector2f sides, float resistitution, 
+	float friction, Collider::Density density, sf::Vector2f position)
 {
 	m_objects.emplace_back(Collider(Collider::ShapeType::RECTANGLE, sides, 
-		resistitution, friction, density));
+		resistitution, friction, density),position);
 }
 
 void World::removeObj()
