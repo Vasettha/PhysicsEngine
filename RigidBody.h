@@ -11,10 +11,17 @@
 class RigidBody
 {
 public:
-	RigidBody();
+
+	RigidBody(const Collider& collider);
 	//~RigidBody();
 
 private:
+
+	void setPosition(const sf::Vector2f& pos);
+	void setOrientation(const float& angle);
+	void setLinearVelocity(const sf::Vector2f& vel);
+	void setAngularVelocity(const float& avel);
+
 	sf::Vector2f m_position;
 	float m_orientation;
 
@@ -31,6 +38,5 @@ private:
 
 	Collider m_collider;
 	
-
 };
 

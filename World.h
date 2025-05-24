@@ -7,8 +7,11 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <optional>
+#include <vector>
 
 #include "PhysicsMath.h"
+#include "Collider.h"
+#include "RigidBody.h"
 
 class World
 {
@@ -18,6 +21,7 @@ public:
 	~World();
 
 	void run();
+
 private:
 	// Window
 	sf::VideoMode m_videoMode;
@@ -34,10 +38,17 @@ private:
 	void pollEvents();
 	void updateMousePos();
 
+	void addCircle(float radius, float resistitution, 
+		float friction, Collider::Density density);
+	void addRectangle(sf::Vector2f sides, float resistitution,
+		float friction, Collider::Density density);
+	void removeObj();
+
 	// Variables
 	bool m_isRunning = true;
 	sf::Vector2i m_mousePosWindow;
 	sf::Vector2f m_mousePosView;
 
-};
+	std::vector<RigidBody> m_objects;
 
+};
