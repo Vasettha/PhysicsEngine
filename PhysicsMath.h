@@ -17,6 +17,7 @@ namespace PhysicsMath
 
 	float dotProduct(const sf::Vector2f& vecA, const sf::Vector2f& vecB);
 
+	sf::Vector2f rotate(const sf::Vector2f& vec, float angleRadians);
 	sf::Vector2f normalize(const sf::Vector2f& vec);
 
 }

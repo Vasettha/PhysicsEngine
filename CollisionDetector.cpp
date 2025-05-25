@@ -12,6 +12,11 @@ void CollisionDetector::detectAll(const std::vector<RigidBody>& bodies)
 	narrowPhase(bodies);
 }
 
+std::vector<CollisionDetector::ContactManifold>& CollisionDetector::getContactManifold()
+{
+	return m_contactManifolds;
+}
+
 void CollisionDetector::broadPhase(const std::vector<RigidBody>& bodies)
 {
 	// Put all the bodies's AABB into the right spacial bin
@@ -136,24 +141,18 @@ void CollisionDetector::narrowPhase(const std::vector<RigidBody>& bodies)
 			// "unrotate" the rectangle
 			float inverseRotationRadians = - (rectangleBody->getOrientation() * M_PI / 180);
 
-			float sinA = std::sin(inverseRotationRadians);
-			float cosA = std::cos(inverseRotationRadians);
-
-			sf::Vector2f localCircleCenter(
-				translatedCircleCenter.x * cosA - translatedCircleCenter.y * sinA,
-				translatedCircleCenter.x * sinA + translatedCircleCenter.y * cosA
-			);
+			sf::Vector2f localCircleCenter(PhysicsMath::rotate(translatedCircleCenter, inverseRotationRadians));
 
 			// Find the closest local rotated x and y 
 			sf::Vector2f rectHalfSides = rectangleBody->getCollider().getHalfSides();
-			sf::Vector2f LocalClosest(
+			sf::Vector2f localClosest(
 				std::clamp(localCircleCenter.x, -rectHalfSides.x, rectHalfSides.x),
 				std::clamp(localCircleCenter.y, -rectHalfSides.y, rectHalfSides.y)
 				); // Closest point of the rectangle
 
 			// Check if distance from closest point < radius
-			float distanceX = localCircleCenter.x - LocalClosest.x;
-			float distanceY = localCircleCenter.y - LocalClosest.y;
+			float distanceX = localCircleCenter.x - localClosest.x;
+			float distanceY = localCircleCenter.y - localClosest.y;
 			float distanceSq = (distanceX * distanceX) + (distanceY * distanceY);
 
 			if (distanceSq < (circleBody->getCollider().getRadius() * circleBody->getCollider().getRadius()))
@@ -163,13 +162,7 @@ void CollisionDetector::narrowPhase(const std::vector<RigidBody>& bodies)
 				// Transform the closest point to world coordinate
 				float rotationRadians = rectangleBody->getOrientation() * M_PI / 180;
 
-				float sinA = std::sin(rotationRadians);
-				float cosA = std::cos(rotationRadians);
-
-				sf::Vector2f reRotateClosest (
-					LocalClosest.x * cosA - LocalClosest.y * sinA,
-					LocalClosest.x * sinA + LocalClosest.y * cosA
-				);
+				sf::Vector2f reRotateClosest (PhysicsMath::rotate(localClosest,rotationRadians));
 
 				sf::Vector2f worldRectangleClosestPoint = rectangleBody->getCenter() + reRotateClosest;
 
@@ -192,6 +185,96 @@ void CollisionDetector::narrowPhase(const std::vector<RigidBody>& bodies)
 		else if (stA == Collider::ShapeType::RECTANGLE && stB == Collider::ShapeType::RECTANGLE)
 		{
 			// Rectangle-Rectangle 
+			// Using SAT
+
+			sf::Vector2f centA = A.getCenter();
+			sf::Vector2f centB = B.getCenter();
+
+			float angleRadA = A.getOrientation() * M_PI/180;
+			float angleRadB = B.getOrientation() * M_PI/180;
+
+			sf::Vector2f halfSidesA = A.getCollider().getHalfSides();
+			sf::Vector2f halfSidesB = B.getCollider().getHalfSides();
+
+			std::array<sf::Vector2f, 4> verticesA;
+			std::array<sf::Vector2f, 4> verticesB;
+
+			verticesA[0] = centA + PhysicsMath::rotate(sf::Vector2f(halfSidesA.x, halfSidesA.y), angleRadA);
+			verticesA[1] = centA + PhysicsMath::rotate(sf::Vector2f(halfSidesA.x, -halfSidesA.y), angleRadA);
+			verticesA[2] = centA + PhysicsMath::rotate(sf::Vector2f(-halfSidesA.x, halfSidesA.y), angleRadA);
+			verticesA[3] = centA + PhysicsMath::rotate(sf::Vector2f(-halfSidesA.x, -halfSidesA.y), angleRadA);
+
+			verticesB[0] = centB + PhysicsMath::rotate(sf::Vector2f(halfSidesB.x, halfSidesB.y), angleRadB);
+			verticesB[1] = centB + PhysicsMath::rotate(sf::Vector2f(halfSidesB.x, -halfSidesB.y), angleRadB);
+			verticesB[2] = centB + PhysicsMath::rotate(sf::Vector2f(-halfSidesB.x, halfSidesB.y), angleRadB);
+			verticesB[3] = centB + PhysicsMath::rotate(sf::Vector2f(-halfSidesB.x, -halfSidesB.y), angleRadB);
+
+			std::array<sf::Vector2f, 4> axes;
+
+			axes[0] = PhysicsMath::normalize(PhysicsMath::rotate(sf::Vector2f(1.0f, 0.0f), angleRadA));
+			axes[1] = PhysicsMath::normalize(PhysicsMath::rotate(sf::Vector2f(0.0f, 1.0f), angleRadA));
+
+			axes[2] = PhysicsMath::normalize(PhysicsMath::rotate(sf::Vector2f(1.0f, 0.0f), angleRadB));
+			axes[3] = PhysicsMath::normalize(PhysicsMath::rotate(sf::Vector2f(0.0f, 1.0f), angleRadB));
+
+			float minOverlap = std::numeric_limits<float>::max();
+			sf::Vector2f collisionNormal;
+			bool collided = true;
+
+			for (auto& axis: axes)
+			{
+				
+				
+				float maxA = std::numeric_limits<float>::lowest();
+				float minA = std::numeric_limits<float>::max();
+				float maxB = std::numeric_limits<float>::lowest();
+				float minB = std::numeric_limits<float>::max();
+
+				for(auto& vecA: verticesA)
+				{
+					float dot = PhysicsMath::dotProduct(axis, vecA);
+					if (dot < minA) minA = dot;
+					if (dot > maxA) maxA = dot;	
+				}
+
+				for (auto& vecB : verticesB)
+				{
+					float dot = PhysicsMath::dotProduct(axis, vecB);
+					if (dot < minB) minB = dot;
+					if (dot > maxB) maxB = dot;
+				}
+
+				if (minA > maxB || maxA < minB)
+				{
+					// Then there is a separating axis!
+					collided = false;
+					break;
+				}
+				else
+				{
+					// There is an overlap
+					float currentOverlap = std::min(maxA, maxB) - std::max(minA, minB);
+					if (currentOverlap < minOverlap) 
+					{
+						minOverlap = currentOverlap;
+						collisionNormal = axis;
+					}
+				}
+			}
+
+			if (collided)
+			{
+				// Generate Contact manifold
+				CollisionDetector::ContactManifold contactManifold;
+				contactManifold.A = &A;
+				contactManifold.B = &B;
+				contactManifold.normal = collisionNormal;
+				contactManifold.depth = minOverlap;
+				//contactManifold.contactPoint = ; TODO
+
+				m_contactManifolds.push_back(contactManifold);
+			}
+
 
 		}
 

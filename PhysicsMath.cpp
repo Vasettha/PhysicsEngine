@@ -22,6 +22,13 @@ float PhysicsMath::dotProduct(const sf::Vector2f& vecA, const sf::Vector2f& vecB
 	return (vecA.x * vecB.x) + (vecA.y * vecB.y);
 }
 
+sf::Vector2f PhysicsMath::rotate(const sf::Vector2f& vec, float angleRadians)
+{
+	float cosA = std::cos(angleRadians);
+	float sinA = std::sin(angleRadians);
+	return sf::Vector2f(vec.x * cosA - vec.y * sinA, vec.x * sinA + vec.y * cosA);
+}
+
 sf::Vector2f PhysicsMath::normalize(const sf::Vector2f& vec)
 {
 	float distance = sqrt(vec.x * vec.x + vec.y * vec.y);

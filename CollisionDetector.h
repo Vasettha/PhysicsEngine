@@ -36,6 +36,7 @@ public:
 	CollisionDetector(float cellSize = 64.f);
 
 	void detectAll(const std::vector<RigidBody>& bodies);
+	std::vector<CollisionDetector::ContactManifold>& getContactManifold();
 
 private:
 
@@ -45,7 +46,7 @@ private:
 	float m_cellSize;
 	std::unordered_map<sf::Vector2f, std::vector<int>> m_spatialMap;
 	std::set<std::pair<int, int>> m_collisionPairs;
-	std::vector<ContactManifold> m_contactManifolds;
+	std::vector<CollisionDetector::ContactManifold> m_contactManifolds;
 
 };
 

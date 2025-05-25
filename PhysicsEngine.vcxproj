@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderResolver.cpp" />
     <ClCompile Include="CollisionDetector.cpp" />
     <ClCompile Include="PhysicsMath.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -144,10 +145,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColliderResolver.h" />
     <ClInclude Include="CollisionDetector.h" />
     <ClInclude Include="PhysicsMath.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PhysicsEngine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
