@@ -33,8 +33,9 @@ void World::init()
 	// Init Text
 	// Init Objects
 
+	addRectangle(sf::Vector2f(40.0f, 40.0f), 1.0f, 0.0f, Collider::Density::LIGHT, sf::Vector2f(50.0f, 100.0f));
 	addCircle(20.0f, 1.0f, 0.0f, Collider::Density::LIGHT, sf::Vector2f(50.0f, 100.0f));
-	addRectangle(sf::Vector2f(40.0f, 40.0f), 1.0f, 0.0f, Collider::Density::LIGHT, sf::Vector2f(500.0f, 100.0f));
+
 
 }
 
@@ -68,8 +69,10 @@ void World::render()
 		case (Collider::ShapeType::RECTANGLE):
 		{
 			sf::RectangleShape rectangle(sf::Vector2f(obj.getCollider().getHalfSides().x * 2, obj.getCollider().getHalfSides().y * 2));
+			rectangle.setOrigin(sf::Vector2f(obj.getCollider().getHalfSides().x * 2, obj.getCollider().getHalfSides().y * 2));
 			rectangle.setPosition(obj.getPosition());
 			rectangle.setFillColor(sf::Color::Red);
+			rectangle.setRotation(sf::Angle(sf::degrees(180)));
 			m_window.draw(rectangle);
 			break;
 		}

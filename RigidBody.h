@@ -12,6 +12,16 @@ class RigidBody
 {
 public:
 
+	struct AABB
+	{
+		// X
+		float left;
+		float right;
+		// Y
+		float top;
+		float bottom;
+	};
+
 	RigidBody(const Collider& collider, 
 		sf::Vector2f position = sf::Vector2f(0.0f, 0.0f));
 	//~RigidBody();
@@ -27,6 +37,7 @@ public:
 	const sf::Vector2f& getLinearVelocity() const;
 	const float& getAngularVelocity() const;
 	const sf::Vector2f& getCenter() const;
+	const RigidBody::AABB& getAABB() const;
 
 private:
 

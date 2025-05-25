@@ -12,4 +12,11 @@ namespace PhysicsMath
 {
 	float areaCircle(const float& radius);
 	float areaRectangle(const sf::Vector2f& halfSides);
+
+	float distance(const sf::Vector2f& pointA, const sf::Vector2f& pointB);
+
+	float dotProduct(const sf::Vector2f& vecA, const sf::Vector2f& vecB);
+
+	sf::Vector2f normalize(const sf::Vector2f& vec);
+
 }

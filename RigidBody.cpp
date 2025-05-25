@@ -65,9 +65,74 @@ const sf::Vector2f& RigidBody::getCenter() const
 	}
 	case(Collider::ShapeType::RECTANGLE):
 	{
-		return m_position + m_collider.getHalfSides();
+		return sf::Vector2f(m_position.x +  m_collider.getHalfSides().x, m_position.y + m_collider.getHalfSides().y);
 		break;
 	}
 	}
 	
+}
+
+const RigidBody::AABB& RigidBody::getAABB() const
+{
+	RigidBody::AABB aabb;
+	switch (m_collider.getShapeType())
+	{
+	case(Collider::ShapeType::CIRCLE):
+	{
+		sf::Vector2f cirCent= getCenter();
+		float rad = m_collider.getRadius();
+
+		aabb.left = cirCent.x - rad;
+		aabb.right = cirCent.x + rad;
+		aabb.top = cirCent.y - rad;
+		aabb.bottom = cirCent.y + rad;
+
+		break;
+	}
+	case(Collider::ShapeType::RECTANGLE):
+	{
+		sf::Vector2f rectCent = getCenter();
+		sf::Vector2f rectHalfSides = m_collider.getHalfSides();
+		float rotationRadians = getOrientation() * M_PI / 180;
+
+		// Four corner of the rectangle
+		sf::Vector2f corners[4] =
+		{
+			{- rectHalfSides.x, - rectHalfSides.y},
+			{- rectHalfSides.x, rectHalfSides.y},
+			{ rectHalfSides.x, - rectHalfSides.y},
+			{ rectHalfSides.x, rectHalfSides.y},
+		};
+
+		// Rotate it and find max min
+
+		float minX = std::numeric_limits<float>::max();
+		float maxX = std::numeric_limits<float>::lowest();
+		float minY = std::numeric_limits<float>::max();
+		float maxY = std::numeric_limits<float>::lowest();
+
+		float sinA = std::sin(rotationRadians);
+		float cosA = std::cos(rotationRadians);
+
+		for (int i = 0; i < 4; i++)
+		{
+			sf::Vector2f worldCorner = sf::Vector2f((corners[i].x * cosA) - (corners[i].y * sinA),
+				(corners[i].x * sinA) + (corners[i].y * cosA)) + rectCent;
+
+			minX = std::min(minX, worldCorner.x);
+			maxX = std::max(maxX, worldCorner.x);
+			minY = std::min(minY, worldCorner.y);
+			maxY = std::max(maxY, worldCorner.y);
+		}
+
+		aabb.left = minX;
+		aabb.right = maxX;
+		aabb.top = minY;
+		aabb.bottom = maxY;
+
+		break;
+	}
+	}
+
+	return aabb;
 }
