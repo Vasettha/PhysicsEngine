@@ -22,6 +22,12 @@ public:
 		float bottom;
 	};
 
+	enum class Density {
+		LIGHT,
+		MID,
+		HEAVY
+	};
+
 	RigidBody(const Collider& collider, 
 		sf::Vector2f position = sf::Vector2f(0.0f, 0.0f));
 	//~RigidBody();
@@ -30,15 +36,25 @@ public:
 	void setOrientation(const float& angle);
 	void setLinearVelocity(const sf::Vector2f& vel);
 	void setAngularVelocity(const float& avel);
+	void setDensity(const RigidBody::Density& density);
+	void setStatic(const bool& isStatic);
 	
 	const Collider& getCollider() const;
+
 	const sf::Vector2f& getPosition() const;
 	const float& getOrientation() const;
 	const sf::Vector2f& getLinearVelocity() const;
 	const float& getAngularVelocity() const;
-	const sf::Vector2f& getCenter() const;
+	const RigidBody::Density& getDensity() const;
+	const float& getInvMass();
+	const float& getInvInertia();
+	const float& getMass();
+	const float& getInertia();
+	const bool& getIsStatic();
+
+
 	const RigidBody::AABB& getAABB() const;
-	const float& getInvMass() const;
+	
 
 private:
 
@@ -49,13 +65,19 @@ private:
 	float m_angularVelocity;
 
 	float m_inertia;
+	float m_mass;
 
 	sf::Vector2f m_forceAccumulator;
 	float m_torqueAccumulator;
 
 	bool m_isStatic;
+	RigidBody::Density m_density;
 
 	Collider m_collider;
+
+	void calculateMass();
+	void calculateInertia();
+	float massPerPixel();
 	
 };
 

@@ -89,7 +89,7 @@ void CollisionDetector::narrowPhase(std::vector<RigidBody>& bodies)
 		if (stA == Collider::ShapeType::CIRCLE && stB == Collider::ShapeType::CIRCLE)
 		{
 			// Circle-Circle 
-			sf::Vector2f diff = A.getCenter() - B.getCenter();
+			sf::Vector2f diff = A.getPosition() - B.getPosition();
 
 			float distSq = PhysicsMath::dotProduct(diff, diff);
 			float combinedRadius = A.getCollider().getRadius() + B.getCollider().getRadius();
@@ -107,7 +107,7 @@ void CollisionDetector::narrowPhase(std::vector<RigidBody>& bodies)
 				contactManifold.B = &B;
 				contactManifold.normal = PhysicsMath::normalize(diff);
 				contactManifold.depth = combinedRadius - dist;
-				contactManifold.contactPoint = A.getCenter() + 
+				contactManifold.contactPoint = A.getPosition() + 
 					contactManifold.normal * A.getCollider().getRadius();
 
 				m_contactManifolds.push_back(contactManifold);
@@ -136,7 +136,7 @@ void CollisionDetector::narrowPhase(std::vector<RigidBody>& bodies)
 			// Circle-Rectangle, using OBB
 
 			// Convert to local rectangle coordinate system 
-			sf::Vector2f translatedCircleCenter = circleBody->getCenter() - rectangleBody->getCenter();
+			sf::Vector2f translatedCircleCenter = circleBody->getPosition() - rectangleBody->getPosition();
 
 			// "unrotate" the rectangle
 			float inverseRotationRadians = - (rectangleBody->getOrientation() * M_PI / 180);
@@ -164,10 +164,10 @@ void CollisionDetector::narrowPhase(std::vector<RigidBody>& bodies)
 
 				sf::Vector2f reRotateClosest (PhysicsMath::rotate(localClosest,rotationRadians));
 
-				sf::Vector2f worldRectangleClosestPoint = rectangleBody->getCenter() + reRotateClosest;
+				sf::Vector2f worldRectangleClosestPoint = rectangleBody->getPosition() + reRotateClosest;
 
 				// Find the direction of the collision based on the closest point
-				sf::Vector2f collisionNormal = circleBody->getCenter() - worldRectangleClosestPoint;
+				sf::Vector2f collisionNormal = circleBody->getPosition() - worldRectangleClosestPoint;
 
 				// Create the Contact Manifold
 				CollisionDetector::ContactManifold contactManifold;
@@ -187,8 +187,8 @@ void CollisionDetector::narrowPhase(std::vector<RigidBody>& bodies)
 			// Rectangle-Rectangle 
 			// Using SAT
 
-			sf::Vector2f centA = A.getCenter();
-			sf::Vector2f centB = B.getCenter();
+			sf::Vector2f centA = A.getPosition();
+			sf::Vector2f centB = B.getPosition();
 
 			float angleRadA = A.getOrientation() * M_PI/180;
 			float angleRadB = B.getOrientation() * M_PI/180;

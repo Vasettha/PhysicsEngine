@@ -23,12 +23,13 @@ private:
 
 	void resolveSingleCollision(CollisionDetector::ContactManifold& contactManifold, 
 		float deltaTime);
-	void applyImpulse(RigidBody& A, RigidBody& B, const sf::Vector2f& normal, float depth);
+	void applyImpulse(RigidBody& A, RigidBody& B, const sf::Vector2f& normal,
+		float depth, const sf::Vector2f& contactPoint);
 	void positionalCorrection(RigidBody& A, RigidBody& B, const sf::Vector2f& normal,
 		float depth);
 
 	float m_positionalCorrectionFactor; // How much to correct penetration 
 	float m_slop; // A small tolerance to avoid "jiggling" from very tiny penetrations
-
+	sf::Clock m_clock;
 };
 

@@ -29,6 +29,17 @@ void RigidBody::setAngularVelocity(const float& avel)
 	m_angularVelocity = avel;
 }
 
+void RigidBody::setDensity(const RigidBody::Density& density)
+{
+	m_density = density;
+	calculateMass();
+}
+
+void RigidBody::setStatic(const bool& isStatic)
+{
+	m_isStatic = isStatic;
+}
+
 const Collider& RigidBody::getCollider() const
 {
 	return m_collider;
@@ -54,22 +65,40 @@ const float& RigidBody::getAngularVelocity() const
 	return m_angularVelocity;
 }
 
-const sf::Vector2f& RigidBody::getCenter() const
+const RigidBody::Density& RigidBody::getDensity() const
 {
-	switch(m_collider.getShapeType())
-	{
-	case(Collider::ShapeType::CIRCLE):
-	{
-		return sf::Vector2f(m_position.x + m_collider.getRadius(), m_position.y + m_collider.getRadius());
-		break;
-	}
-	case(Collider::ShapeType::RECTANGLE):
-	{
-		return sf::Vector2f(m_position.x +  m_collider.getHalfSides().x, m_position.y + m_collider.getHalfSides().y);
-		break;
-	}
-	}
-	
+	return m_density;
+}
+
+const float& RigidBody::getInvMass()
+{
+	if (m_isStatic) return 0.0f;
+
+	return 1.f / getMass();
+}
+
+const float& RigidBody::getInvInertia()
+{
+	if (m_isStatic) return 0.0f;
+
+	return 1.f / getInertia();
+}
+
+const float& RigidBody::getMass() 
+{
+	calculateMass();
+	return m_mass;
+}
+
+const float& RigidBody::getInertia() 
+{
+	calculateInertia();
+	return m_inertia;
+}
+
+const bool& RigidBody::getIsStatic()
+{
+	return m_isStatic;
 }
 
 const RigidBody::AABB& RigidBody::getAABB() const
@@ -79,7 +108,7 @@ const RigidBody::AABB& RigidBody::getAABB() const
 	{
 	case(Collider::ShapeType::CIRCLE):
 	{
-		sf::Vector2f cirCent= getCenter();
+		sf::Vector2f cirCent = getPosition();
 		float rad = m_collider.getRadius();
 
 		aabb.left = cirCent.x - rad;
@@ -91,16 +120,16 @@ const RigidBody::AABB& RigidBody::getAABB() const
 	}
 	case(Collider::ShapeType::RECTANGLE):
 	{
-		sf::Vector2f rectCent = getCenter();
+		sf::Vector2f rectCent = getPosition();
 		sf::Vector2f rectHalfSides = m_collider.getHalfSides();
 		float rotationRadians = getOrientation() * M_PI / 180;
 
 		// Four corner of the rectangle
 		sf::Vector2f corners[4] =
 		{
-			{- rectHalfSides.x, - rectHalfSides.y},
-			{- rectHalfSides.x, rectHalfSides.y},
-			{ rectHalfSides.x, - rectHalfSides.y},
+			{-rectHalfSides.x, -rectHalfSides.y},
+			{-rectHalfSides.x, rectHalfSides.y},
+			{ rectHalfSides.x, -rectHalfSides.y},
 			{ rectHalfSides.x, rectHalfSides.y},
 		};
 
@@ -137,9 +166,67 @@ const RigidBody::AABB& RigidBody::getAABB() const
 	return aabb;
 }
 
-const float& RigidBody::getInvMass() const
+void RigidBody::calculateMass()
 {
-	if (m_isStatic) return 0.0f;
+	if (m_isStatic)
+	{
+		m_mass = std::numeric_limits<float>::max();
+		return;
+	}
 
-	return 1.f / m_collider.getMass();
+	switch (m_collider.getShapeType())
+	{
+	case Collider::ShapeType::CIRCLE:
+
+		m_mass = PhysicsMath::areaCircle(m_collider.getRadius()) * massPerPixel();
+		break;
+
+	case Collider::ShapeType::RECTANGLE:
+
+		m_mass = PhysicsMath::areaRectangle(m_collider.getHalfSides()) * massPerPixel();
+		break;
+	}
 }
+
+void RigidBody::calculateInertia()
+{
+	if (m_isStatic)
+	{
+		m_inertia = std::numeric_limits<float>::max();
+		return;
+	}
+
+	switch (m_collider.getShapeType())
+	{
+	case Collider::ShapeType::CIRCLE:
+
+		m_inertia = 0.5f * getMass() * m_collider.getRadius() * m_collider.getRadius();
+		break;
+
+	case Collider::ShapeType::RECTANGLE:
+
+		//TODO
+		break;
+	}
+	
+}
+
+float RigidBody::massPerPixel()
+{
+	float mpp = 0.0f;
+	switch (m_density)
+	{
+	case (Density::LIGHT):
+		mpp = 100.0f;
+		break;
+	case(Density::MID):
+		mpp = 200.0f;
+		break;
+	case(Density::HEAVY):
+		mpp = 300.0f;
+		break;
+	}
+
+	return mpp;
+}
+

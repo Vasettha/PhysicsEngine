@@ -22,6 +22,11 @@ float PhysicsMath::dotProduct(const sf::Vector2f& vecA, const sf::Vector2f& vecB
 	return (vecA.x * vecB.x) + (vecA.y * vecB.y);
 }
 
+float PhysicsMath::crossProduct(const sf::Vector2f& vecA, const sf::Vector2f& vecB)
+{
+	return vecA.x * vecB.y - vecA.y * vecB.x;
+}
+
 sf::Vector2f PhysicsMath::rotate(const sf::Vector2f& vec, float angleRadians)
 {
 	float cosA = std::cos(angleRadians);

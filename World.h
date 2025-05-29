@@ -12,6 +12,8 @@
 #include "PhysicsMath.h"
 #include "Collider.h"
 #include "RigidBody.h"
+#include "CollisionDetector.h"
+#include "ColliderResolver.h"
 
 class World
 {
@@ -37,15 +39,15 @@ private:
 	// Secondary Functions
 	void pollEvents();
 	void updateMousePos();
-	void updateObjects();
+	void updateObjects(const float& deltaTime);
+
+	sf::Clock m_clock;
 
 	void addCircle(float radius, float resistitution = 1.0f, 
 		float friction = 0.0f, 
-		Collider::Density density = Collider::Density::LIGHT,
 		sf::Vector2f position = sf::Vector2f(0.0f, 0.0f));
 	void addRectangle(sf::Vector2f sides, float resistitution = 1.0f,
 		float friction = 0.0f, 
-		Collider::Density density = Collider::Density::LIGHT,
 		sf::Vector2f position = sf::Vector2f(0.0f, 0.0f));
 	void removeObj();
 
@@ -55,5 +57,7 @@ private:
 	sf::Vector2f m_mousePosView;
 
 	std::vector<RigidBody> m_objects;
+	CollisionDetector m_detector;
+	ColliderResolver m_resolver;
 
 };
