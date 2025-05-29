@@ -24,8 +24,8 @@ public:
 
 	struct ContactManifold
 	{
-		const RigidBody* A;
-		const RigidBody* B;
+		RigidBody* A;
+		RigidBody* B;
 		sf::Vector2f normal; 
 		float depth;
 		sf::Vector2f contactPoint;
@@ -35,13 +35,13 @@ public:
 	// Spacial hashing
 	CollisionDetector(float cellSize = 64.f);
 
-	void detectAll(const std::vector<RigidBody>& bodies);
+	void detectAll(std::vector<RigidBody>& bodies);
 	std::vector<CollisionDetector::ContactManifold>& getContactManifold();
 
 private:
 
-	void broadPhase(const std::vector<RigidBody>& bodies);
-	void narrowPhase(const std::vector<RigidBody>& bodies);
+	void broadPhase(std::vector<RigidBody>& bodies);
+	void narrowPhase(std::vector<RigidBody>& bodies);
 
 	float m_cellSize;
 	std::unordered_map<sf::Vector2f, std::vector<int>> m_spatialMap;

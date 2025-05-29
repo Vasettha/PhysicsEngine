@@ -21,10 +21,9 @@ public:
 
 private:
 
-	void resolveSingleCollision(CollisionDetector::ContactManifold& contactManifolds, 
+	void resolveSingleCollision(CollisionDetector::ContactManifold& contactManifold, 
 		float deltaTime);
-	void applyImpulse(RigidBody& A, RigidBody& B, const sf::Vector2f& normal, float depth,
-		float restitution, float friction);
+	void applyImpulse(RigidBody& A, RigidBody& B, const sf::Vector2f& normal, float depth);
 	void positionalCorrection(RigidBody& A, RigidBody& B, const sf::Vector2f& normal,
 		float depth);
 

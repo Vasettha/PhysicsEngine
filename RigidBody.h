@@ -38,6 +38,7 @@ public:
 	const float& getAngularVelocity() const;
 	const sf::Vector2f& getCenter() const;
 	const RigidBody::AABB& getAABB() const;
+	const float& getInvMass() const;
 
 private:
 
@@ -47,7 +48,6 @@ private:
 	sf::Vector2f m_linearVelocity;
 	float m_angularVelocity;
 
-	float m_mass;
 	float m_inertia;
 
 	sf::Vector2f m_forceAccumulator;

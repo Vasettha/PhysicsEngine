@@ -6,7 +6,7 @@ CollisionDetector::CollisionDetector(float cellSize)
 	m_contactManifolds.reserve(50);
 }
 
-void CollisionDetector::detectAll(const std::vector<RigidBody>& bodies)
+void CollisionDetector::detectAll(std::vector<RigidBody>& bodies)
 {
 	broadPhase(bodies);
 	narrowPhase(bodies);
@@ -17,7 +17,7 @@ std::vector<CollisionDetector::ContactManifold>& CollisionDetector::getContactMa
 	return m_contactManifolds;
 }
 
-void CollisionDetector::broadPhase(const std::vector<RigidBody>& bodies)
+void CollisionDetector::broadPhase(std::vector<RigidBody>& bodies)
 {
 	// Put all the bodies's AABB into the right spacial bin
 
@@ -72,14 +72,14 @@ void CollisionDetector::broadPhase(const std::vector<RigidBody>& bodies)
 	}
 }
 
-void CollisionDetector::narrowPhase(const std::vector<RigidBody>& bodies)
+void CollisionDetector::narrowPhase(std::vector<RigidBody>& bodies)
 {
 	// Determine if 2 objects collider. If it does, generate contact manifold
 
 	for (auto& pair: m_collisionPairs)
 	{
-		const RigidBody& A = bodies[pair.first];
-		const RigidBody& B = bodies[pair.second];
+		RigidBody& A = bodies[pair.first];
+		RigidBody& B = bodies[pair.second];
 
 		Collider::ShapeType stA = A.getCollider().getShapeType();
 		Collider::ShapeType stB = B.getCollider().getShapeType();
@@ -119,8 +119,8 @@ void CollisionDetector::narrowPhase(const std::vector<RigidBody>& bodies)
 		else if (stA == Collider::ShapeType::CIRCLE && stB == Collider::ShapeType::RECTANGLE 
 			|| stA == Collider::ShapeType::RECTANGLE && stB == Collider::ShapeType::CIRCLE)
 		{
-			const RigidBody* circleBody = nullptr;
-			const RigidBody* rectangleBody = nullptr;
+			RigidBody* circleBody = nullptr;
+			RigidBody* rectangleBody = nullptr;
 
 			if (stA == Collider::ShapeType::RECTANGLE && stB == Collider::ShapeType::CIRCLE)
 			{

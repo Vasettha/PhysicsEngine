@@ -136,3 +136,10 @@ const RigidBody::AABB& RigidBody::getAABB() const
 
 	return aabb;
 }
+
+const float& RigidBody::getInvMass() const
+{
+	if (m_isStatic) return 0.0f;
+
+	return 1.f / m_collider.getMass();
+}
