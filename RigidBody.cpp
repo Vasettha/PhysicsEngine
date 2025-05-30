@@ -5,7 +5,7 @@ RigidBody::RigidBody(const Collider& collider, sf::Vector2f position)
 	m_linearVelocity(0.0f, 0.0f), m_angularVelocity(0.0f),
 	m_mass(1.0f), m_inertia(1.0f),
 	m_forceAccumulator(0.0f, 0.0f), m_torqueAccumulator(0.0f),
-	m_isStatic(false), m_collider(collider)
+	m_isStatic(false), m_collider(collider), m_density(Density::LIGHT)
 {
 }
 
@@ -213,7 +213,7 @@ void RigidBody::calculateInertia()
 
 float RigidBody::massPerPixel()
 {
-	float mpp = 0.0f;
+	float mpp = 1.0f;
 	switch (m_density)
 	{
 	case (Density::LIGHT):

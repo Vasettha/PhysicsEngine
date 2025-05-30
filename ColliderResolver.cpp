@@ -32,18 +32,18 @@ void ColliderResolver::applyImpulse(RigidBody& A, RigidBody& B, const sf::Vector
 	sf::Vector2f relativeVelocity = A.getLinearVelocity() - B.getLinearVelocity();
 	float velNormal = PhysicsMath::dotProduct(relativeVelocity, normal);
 
-	float impulse = -(1 + restitution) * velNormal / (invMassA + invMassB);
-	A.setLinearVelocity(A.getLinearVelocity() - impulse * invMassA * normal);
-	B.setLinearVelocity(B.getLinearVelocity() + impulse * invMassB * normal);
+	float impulseScalar = -(1 + restitution) * velNormal / (invMassA + invMassB);
+	A.setLinearVelocity(A.getLinearVelocity() + impulseScalar * invMassA * normal);
+	B.setLinearVelocity(B.getLinearVelocity() - impulseScalar * invMassB * normal);
 
 	// Angular
 	sf::Vector2f rA = contactPoint - A.getPosition();
 	sf::Vector2f rB = contactPoint - B.getPosition();
 
 	A.setAngularVelocity(A.getAngularVelocity() -
-		(impulse * A.getInvInertia() * PhysicsMath::crossProduct(rA, normal)));
+		(impulseScalar * A.getInvInertia() * PhysicsMath::crossProduct(rA, normal)));
 	B.setAngularVelocity(B.getAngularVelocity() -
-		(impulse * B.getInvInertia() * PhysicsMath::crossProduct(rB, normal)));
+		(impulseScalar * B.getInvInertia() * PhysicsMath::crossProduct(rB, normal)));
 		
 
 
@@ -54,12 +54,14 @@ void ColliderResolver::positionalCorrection(RigidBody& A, RigidBody& B, const sf
 	float invMassA = A.getInvMass();
 	float invMassB = B.getInvMass();
 
-	if (invMassA + invMassB == 0) return; // If both are static
+	float penetration = std::max(depth - m_slop, 0.0f);
+	float totalInvMass = invMassA + invMassB;
 
-	float correction = (std::max(depth - m_slop, 0.0f) / (invMassA + invMassB)
-		* m_positionalCorrectionFactor);
+	if (totalInvMass == 0.0f) return; // Avoid division by zero if both are static
 
-	A.setPosition(A.getPosition() - normal * correction * invMassA);
-	B.setPosition(B.getPosition() + normal * correction * invMassB);
+	sf::Vector2f correctionOffset = normal * (penetration / totalInvMass) * m_positionalCorrectionFactor;
+
+	A.setPosition(A.getPosition() + correctionOffset * invMassA); 
+	B.setPosition(B.getPosition() - correctionOffset * invMassB); 
 	
 }

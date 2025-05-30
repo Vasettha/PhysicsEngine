@@ -3,7 +3,7 @@
 float PhysicsMath::areaCircle(const float& radius)
 {
 	
-	return pow(radius, 2) * M_PI;
+	return radius * radius * M_PI;
 }
 
 float PhysicsMath::areaRectangle(const sf::Vector2f& halfSides)

@@ -33,7 +33,7 @@ public:
 
 
 	// Spacial hashing
-	CollisionDetector(float cellSize = 64.f);
+	CollisionDetector(float cellSize = 128.f);
 
 	void detectAll(std::vector<RigidBody>& bodies);
 	std::vector<CollisionDetector::ContactManifold>& getContactManifold();

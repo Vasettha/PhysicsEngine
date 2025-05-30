@@ -49,7 +49,7 @@ void CollisionDetector::broadPhase(std::vector<RigidBody>& bodies)
 	{
 		if (cell.second.size() < 2)
 		{
-			break;
+			continue;
 		}
 
 		for (int i = 0; i < cell.second.size(); i++)
